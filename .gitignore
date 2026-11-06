@@ -1,0 +1,13 @@
+backend/venv/
+backend/opendf.db
+backend/storage/raw/*
+backend/storage/export/*
+backend/storage/settings.json
+!backend/storage/raw/.gitkeep
+!backend/storage/export/.gitkeep
+**/__pycache__/
+*.pyc
+frontend/node_modules/
+frontend/dist/
+.DS_Store
+*.log

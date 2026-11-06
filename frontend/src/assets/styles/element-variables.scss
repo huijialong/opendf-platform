@@ -1,0 +1,25 @@
+:root {
+  --el-color-primary: #1890ff;
+  --odf-primary: #1890ff;
+  --odf-sidebar: #304156;
+  --odf-sidebar-deep: #2b2f3a;
+  --odf-submenu: #1f2d3d;
+  --odf-menu-text: #bfcbd9;
+  --odf-bg: #f0f2f5;
+  --odf-header-height: 50px;
+  --odf-tags-height: 34px;
+  --odf-text: #303133;
+  --odf-card: #ffffff;
+}
+
+html[data-font-size='large'] {
+  font-size: 16px;
+}
+
+html[data-font-size='default'] {
+  font-size: 14px;
+}
+
+html[data-font-size='small'] {
+  font-size: 12px;
+}
