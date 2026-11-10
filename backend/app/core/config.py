@@ -1,12 +1,17 @@
 """Base paths and runtime settings."""
 
+import os
 from pathlib import Path
 
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 # backend/
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-STORAGE_DIR = BASE_DIR / "storage"
+# OPENDF_DATA_DIR lets production keep the SQLite file and storage/
+# on one host-mounted directory (journals must sit beside the db).
+_data = os.environ.get("OPENDF_DATA_DIR", "").strip()
+DATA_DIR = Path(_data).resolve() if _data else BASE_DIR
+STORAGE_DIR = DATA_DIR / "storage"
 RAW_DIR = STORAGE_DIR / "raw"
 EXPORT_DIR = STORAGE_DIR / "export"
 SETTINGS_PATH = STORAGE_DIR / "settings.json"

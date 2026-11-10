@@ -1,9 +1,13 @@
-from sqlalchemy import create_engine
-from sqlalchemy.orm import declarative_base, sessionmaker
+import os
 from pathlib import Path
 
+from sqlalchemy import create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
+
 BASE_DIR = Path(__file__).resolve().parent.parent.parent
-DB_PATH = BASE_DIR / "opendf.db"
+_data = os.environ.get("OPENDF_DATA_DIR", "").strip()
+DATA_DIR = Path(_data).resolve() if _data else BASE_DIR
+DB_PATH = DATA_DIR / "opendf.db"
 SQLALCHEMY_DATABASE_URL = f"sqlite:///{DB_PATH}"
 
 engine = create_engine(

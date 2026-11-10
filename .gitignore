@@ -11,3 +11,6 @@ frontend/node_modules/
 frontend/dist/
 .DS_Store
 *.log
+
+# Production runtime data on the server (db + storage)
+data/

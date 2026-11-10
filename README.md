@@ -32,6 +32,7 @@ OPENDF_HOST=0.0.0.0 OPENDF_PORT=8000 python run.py
 | `OPENDF_API_PREFIX` | `/api/v1` | API 前缀 |
 | `OPENDF_CORS_ORIGINS` | `*` | 允许的浏览器来源，逗号分隔 |
 | `OPENDF_APP_NAME` | OpenDF 具身智能采标平台 | 服务名称 |
+| `OPENDF_DATA_DIR` | 后端目录（即 `opendf.db` 与 `storage/` 所在处） | 把数据库和对象存储放到别的目录；生产镜像设为 `/data` |
 
 接口文档：http://127.0.0.1:8000/docs
 
@@ -62,3 +63,31 @@ npm run dev
 3. 打开标注模块：播放视频，红色游标沿波形移动；点击波形跳转；拖拽区间后选择 Approach / Grasp / Place。
 4. 在审核模块通过或驳回切片。
 5. 在数据模块导出 LeRobot v2.1 包并下载。
+
+## 生产部署（vpsjy / Docker）
+
+生产目录是 vpsjy 上的 `/data/opendf`。前后端打成两个镜像，用同一份 `docker-compose.yml` 拉起，项目名固定为 `opendf`，不会碰到这台机器上其他容器。只有前端 nginx 对外发布端口，而且只绑在本机回环地址：`127.0.0.1:18090`。公网入口是 Cloudflare Tunnel `jyvps` 上的 `opendf.20000427.xyz`，前面加了 Cloudflare Access（邮箱一次性验证码，会话 7 天）。
+
+首次或更新部署，在服务器上执行：
+
+```bash
+cd /data/opendf
+./deploy.sh
+```
+
+`./deploy.sh` 会从 Git 拉取指定引用（默认 `main`）、构建镜像、只重启 `opendf` 这个 compose 项目，并在还没有带视频的会话时自动调用一次 `POST /api/v1/sessions/mock-sample`。指定分支或 commit：
+
+```bash
+./deploy.sh deploy/vpsjy-docker
+```
+
+运行时数据在 `/data/opendf/data/`（`opendf.db` 和 `storage/`），已被 gitignore，更新代码时不会被覆盖。后端镜像内安装了 ffmpeg / ffprobe，用于模拟样本和 LeRobot 导出。
+
+本机验证：
+
+```bash
+curl -sI http://127.0.0.1:18090/
+curl -s http://127.0.0.1:18090/api/v1/dashboard/stats
+```
+
+前端路由 `/docs` 是操作手册，因此 FastAPI Swagger 不挂在 `/docs`，需要看接口文档时打开 `/redoc` 或 `/openapi.json`。
