@@ -1,0 +1,22 @@
+# Keep the production build context small. Do not send local venv, node_modules, or runtime data.
+.git
+.gitignore
+**/.DS_Store
+**/*.log
+**/__pycache__/
+**/*.pyc
+backend/venv/
+backend/opendf.db
+backend/opendf.db-journal
+backend/opendf.db-wal
+backend/opendf.db-shm
+backend/storage/raw/*
+backend/storage/export/*
+backend/storage/settings.json
+!backend/storage/raw/.gitkeep
+!backend/storage/export/.gitkeep
+frontend/node_modules/
+frontend/dist/
+data/
+deploy.sh
+README.md

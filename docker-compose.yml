@@ -1,0 +1,59 @@
+# Compose project name is pinned so `docker compose` never touches
+# the other stacks on this shared machine (CVAT, material-audit, databases, …).
+name: opendf
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: opendf-backend:latest
+    container_name: opendf-backend
+    restart: unless-stopped
+    environment:
+      OPENDF_HOST: "0.0.0.0"
+      OPENDF_PORT: "8000"
+    volumes:
+      # Runtime data stays on the host. Pre-create data/opendf.db as a file
+      # (deploy.sh does this); if the file is missing, Docker would mount a directory.
+      - ./data/storage:/app/storage
+      - ./data/opendf.db:/app/opendf.db
+    # Run as the host `dev` user so files in ./data stay writable outside the container.
+    user: "1000:1000"
+    expose:
+      - "8000"
+    mem_limit: 1g
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "python",
+          "-c",
+          "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/api/v1/dashboard/stats')",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 8
+      start_period: 30s
+
+  frontend:
+    build:
+      context: .
+      dockerfile: frontend/Dockerfile
+    image: opendf-frontend:latest
+    container_name: opendf-frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    ports:
+      # Bound to loopback only. Cloudflare Tunnel jyvps forwards
+      # opendf.20000427.xyz -> http://127.0.0.1:18090.
+      - "127.0.0.1:18090:80"
+    mem_limit: 128m
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
