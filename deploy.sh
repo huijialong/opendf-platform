@@ -14,7 +14,8 @@ REF="${1:-main}"
 
 echo "== 1/5 fetch $REF"
 if git rev-parse --git-dir >/dev/null 2>&1; then
-  git fetch -q --all --tags --prune || true
+  # vpsjy currently cannot reach github.com:443; keep a short timeout so redeploy does not stall.
+  timeout 15 git fetch -q --all --tags --prune || true
   TARGET="$(git rev-parse --verify -q "origin/$REF" || git rev-parse --verify -q "$REF^{commit}" || true)"
   if [ -n "${TARGET:-}" ]; then
     # reset --hard only affects tracked files; ./data (runtime db/storage) is gitignored.
