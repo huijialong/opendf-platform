@@ -35,7 +35,7 @@ OPENDF_HOST=0.0.0.0 OPENDF_PORT=8000 python run.py
 
 接口文档：http://127.0.0.1:8000/docs
 
-数据库文件是 `backend/opendf.db`。视频和轨迹写到 `backend/storage/raw/`，导出包写到 `backend/storage/export/`。LeRobot 导出是 v2.1 目录：`data/chunk-000/episode_XXXXXX.parquet`、`meta/info.json`（以及 episodes、tasks、stats）、`videos/chunk-000/observation.images.rgb/episode_XXXXXX.mp4`。写出 parquet 需要 `pandas` 和 `pyarrow`；两者缺一时导出仍会返回下载地址，并在响应和 `info.json` 里带上 CSV 回退说明。
+数据库文件是 `backend/opendf.db`。视频和轨迹写到 `backend/storage/raw/`，导出包写到 `backend/storage/export/`。LeRobot 导出是 v2.1 目录：`data/chunk-000/episode_XXXXXX.parquet`（数值列与 `meta/info.json` 一致，为 float32）、`meta/info.json`（以及 episodes、tasks、stats，含视频特征统计）、`videos/chunk-000/observation.images.rgb/episode_XXXXXX.mp4`。有 ffmpeg 时，非 H.264 或非 MP4 的视频会转成 H.264 yuv420p，缺视频的回合会补一段黑屏；`info.json` 里的编码来自写出文件的探测结果。没有 ffmpeg 时，只原样打包已经是 MP4 的文件，并记录探测到的编码，不会把别的容器标成 H.264。写出 parquet 需要 `pandas` 和 `pyarrow`；两者缺一时导出仍会返回下载地址，并在响应和 `info.json` 里带上 CSV 回退说明。
 
 生成一条模拟样本（正弦末端轨迹，夹爪在 3–7 秒闭合，并带一段对齐测试视频）：
 
