@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.api import annotation, auth, dashboard, datasets, devices, review, sessions, system, tasks
-from app.core.config import RAW_DIR, STORAGE_DIR, settings
+from app.core.config import STORAGE_DIR, ensure_storage_dirs, resolved_cors_origins, settings
 from app.db import models  # noqa: F401
 from app.db.database import Base, SessionLocal, engine
 from app.services.bootstrap import seed_if_empty
@@ -18,8 +18,7 @@ from app.services.bootstrap import seed_if_empty
 
 @asynccontextmanager
 async def lifespan(_app: FastAPI):
-    RAW_DIR.mkdir(parents=True, exist_ok=True)
-    (STORAGE_DIR / "export").mkdir(parents=True, exist_ok=True)
+    ensure_storage_dirs()
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     try:
@@ -38,7 +37,7 @@ app = FastAPI(
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=resolved_cors_origins(),
     allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -71,6 +70,8 @@ app.include_router(review.router, prefix=prefix)
 app.include_router(datasets.router, prefix=prefix)
 app.include_router(system.router, prefix=prefix)
 
+# StaticFiles refuses to mount a directory that does not exist yet.
+ensure_storage_dirs()
 app.mount("/storage", StaticFiles(directory=str(STORAGE_DIR)), name="storage")
 
 
