@@ -40,7 +40,8 @@ REVIEW_DECISIONS = ("APPROVED", "REJECTED")
 class Settings(BaseSettings):
     app_name: str = "OpenDF 具身智能采标平台"
     api_prefix: str = "/api/v1"
-    host: str = "0.0.0.0"
+    # TC-01 expects http://127.0.0.1:8000 unless OPENDF_HOST / OPENDF_PORT override it.
+    host: str = "127.0.0.1"
     port: int = 8000
     cors_origins: str = "*"
 
@@ -48,3 +49,17 @@ class Settings(BaseSettings):
 
 
 settings = Settings()
+
+
+def ensure_storage_dirs() -> None:
+    """Create storage/, storage/raw/, and storage/export/ if they are missing."""
+    RAW_DIR.mkdir(parents=True, exist_ok=True)
+    EXPORT_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def resolved_cors_origins() -> list[str]:
+    raw = (settings.cors_origins or "").strip()
+    if not raw or raw == "*":
+        return ["*"]
+    origins = [part.strip() for part in raw.split(",") if part.strip()]
+    return origins or ["*"]

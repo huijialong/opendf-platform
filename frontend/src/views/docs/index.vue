@@ -22,7 +22,7 @@ const manual = [
   },
   {
     title: '6. 导出',
-    body: '数据模块选择任务和格式。LeRobot 包包含 meta/info.json、episodes.jsonl 和逐帧 CSV；HDF5 结构包按 observations / actions / timestamps 组路径组织；JSON 包是可读索引。下载链接指向 /storage/export。',
+    body: '数据模块选择任务和格式。LeRobot v2.1 包包含 meta/info.json、episodes.jsonl、tasks.jsonl、stats，以及 data/chunk-000/episode_*.parquet；有视频时写入 videos/chunk-000/observation.images.rgb/。HDF5 结构包按 observations / actions / timestamps 组路径组织；JSON 包是可读索引。下载链接指向 /storage/export。',
   },
 ]
 

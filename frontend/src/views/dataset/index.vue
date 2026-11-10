@@ -14,7 +14,7 @@ const format = ref('lerobot')
 const result = ref(null)
 
 const formats = [
-  { value: 'lerobot', title: 'LeRobot', desc: 'meta/info.json、episodes 与逐帧 CSV，可直接对接训练仓库。' },
+  { value: 'lerobot', title: 'LeRobot', desc: 'v2.1：data/chunk-000/episode_*.parquet、meta/info.json，视频在 videos/chunk-000/observation.images.rgb/。' },
   { value: 'hdf5', title: 'HDF5 结构', desc: '按 /observations、/actions、/timestamps 组路径打包数组与视频。' },
   { value: 'json', title: 'JSON', desc: '任务、回合和标注切片的可读索引。' },
 ]
@@ -115,6 +115,7 @@ onMounted(load)
         </template>
         <el-link :href="result.download_url" target="_blank" type="primary">下载数据包</el-link>
       </el-alert>
+      <el-alert v-if="result?.warning" type="warning" :title="result.warning" show-icon :closable="false" class="result" />
     </section>
 
     <section class="odf-card block">
