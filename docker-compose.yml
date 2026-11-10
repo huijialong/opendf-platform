@@ -13,11 +13,11 @@ services:
     environment:
       OPENDF_HOST: "0.0.0.0"
       OPENDF_PORT: "8000"
+      # Keep the SQLite file and storage/ on one host directory so WAL/journal
+      # files can be created beside the database.
+      OPENDF_DATA_DIR: "/data"
     volumes:
-      # Runtime data stays on the host. Pre-create data/opendf.db as a file
-      # (deploy.sh does this); if the file is missing, Docker would mount a directory.
-      - ./data/storage:/app/storage
-      - ./data/opendf.db:/app/opendf.db
+      - ./data:/data
     # Run as the host `dev` user so files in ./data stay writable outside the container.
     user: "1000:1000"
     expose:

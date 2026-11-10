@@ -32,6 +32,7 @@ OPENDF_HOST=0.0.0.0 OPENDF_PORT=8000 python run.py
 | `OPENDF_API_PREFIX` | `/api/v1` | API 前缀 |
 | `OPENDF_CORS_ORIGINS` | `*` | 允许的浏览器来源，逗号分隔 |
 | `OPENDF_APP_NAME` | OpenDF 具身智能采标平台 | 服务名称 |
+| `OPENDF_DATA_DIR` | 后端目录（即 `opendf.db` 与 `storage/` 所在处） | 把数据库和对象存储放到别的目录；生产镜像设为 `/data` |
 
 接口文档：http://127.0.0.1:8000/docs
 

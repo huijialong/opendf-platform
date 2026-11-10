@@ -29,10 +29,7 @@ fi
 
 echo "== 2/5 prepare persistent data dir"
 mkdir -p data/storage/raw data/storage/export
-if [ ! -f data/opendf.db ]; then
-  # Must be a regular file before compose bind-mounts it.
-  touch data/opendf.db
-fi
+# SQLite and its journal/WAL files all live in this directory (OPENDF_DATA_DIR=/data).
 
 echo "== 3/5 build and start (opendf project only)"
 docker compose -p opendf up -d --build
